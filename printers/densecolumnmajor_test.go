@@ -19,6 +19,18 @@ func TestDenseColumnMajor_Print(t *testing.T) {
 			items:    []string{},
 			expected: "",
 		},
+		{
+			width:    11,
+			spacing:  1,
+			items:    []string{"the", "quick", "brown", "fox", "jumps"},
+			expected: "the   fox\nquick jumps\nbrown\n",
+		},
+		{
+			width:    17,
+			spacing:  1,
+			items:    []string{"the", "quick", "brown", "fox", "jumps"},
+			expected: "the   brown jumps\nquick fox\n",
+		},
 	}
 	for _, testCase := range testCases {
 		printer := NewDenseColumnMajor(testCase.width, testCase.spacing)
@@ -27,7 +39,7 @@ func TestDenseColumnMajor_Print(t *testing.T) {
 		actual := buffer.String()
 		if !reflect.DeepEqual(actual, testCase.expected) {
 			t.Errorf(
-				"%v, %v | %v => %v, want %v",
+				"%v, %v | %v => '%v', want '%v'",
 				testCase.width, testCase.spacing, testCase.items, actual, testCase.expected)
 		}
 	}
