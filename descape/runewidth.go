@@ -20,13 +20,12 @@ func StringWidth(str string) int {
 		DefaultState = iota
 		EscapeState
 		ControlState
-		ControlExitState
 	)
 	state := DefaultState
 	width := 0
 	for _, input := range str {
 		switch state {
-		case DefaultState, ControlExitState:
+		case DefaultState:
 			if input == ESC {
 				state = EscapeState
 			} else {
@@ -41,7 +40,7 @@ func StringWidth(str string) int {
 			}
 		case ControlState:
 			if LowestFB <= input && input <= HighestFB {
-				state = ControlExitState
+				state = DefaultState
 			}
 		}
 	}
