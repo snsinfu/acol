@@ -18,12 +18,12 @@ func main() {
 func run() error {
 	items, err := utils.ReadLines(os.Stdin)
 	if err != nil {
-		return fmt.Errorf("reading from standard input:", err)
+		return fmt.Errorf("reading from standard input: %s", err)
 	}
 
 	printer, err := makePrinter()
 	if err != nil {
-		return fmt.Errorf("creating printer:", err)
+		return fmt.Errorf("creating printer: %s", err)
 	}
 
 	cells := printers.MakeCells(items)
