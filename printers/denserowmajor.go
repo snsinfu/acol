@@ -44,7 +44,7 @@ func (this *DenseRowMajor) printColumns(out io.Writer, cells []Cell, columnWidth
 		if column > 0 {
 			padding := columnWidths[column-1] - cells[i-1].Width
 			spacing := padding + this.columnSpacing
-			fmt.Print(spaces[:spacing])
+			fmt.Fprint(out, spaces[:spacing])
 		}
 		fmt.Fprint(out, cell.Content)
 		if column == numColumns-1 {
