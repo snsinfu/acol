@@ -4,6 +4,9 @@ import (
 	"github.com/mattn/go-runewidth"
 )
 
+/*
+Cell is text with width information.
+*/
 type Cell struct {
 	Content string
 	Width   int
