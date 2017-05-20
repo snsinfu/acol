@@ -1,7 +1,7 @@
 package printers
 
 import (
-	"github.com/mattn/go-runewidth"
+	"github.com/frickiericker/acol/descape"
 )
 
 /*
@@ -19,7 +19,7 @@ func MakeCells(items []string) []Cell {
 	cells := make([]Cell, len(items))
 	for i, item := range items {
 		cells[i].Content = item
-		cells[i].Width = runewidth.StringWidth(item)
+		cells[i].Width = descape.StringWidth(item)
 	}
 	return cells
 }
