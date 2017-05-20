@@ -50,7 +50,7 @@ func TestReadLines_examples(t *testing.T) {
 type errorReader struct {
 }
 
-func (this *errorReader) Read(_ []byte) (int, error) {
+func (reader *errorReader) Read(_ []byte) (int, error) {
 	return 0, errors.New("expected")
 }
 

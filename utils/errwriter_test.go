@@ -8,14 +8,14 @@ import (
 type succeedingWriter struct {
 }
 
-func (this *succeedingWriter) Write(data []byte) (int, error) {
+func (writer *succeedingWriter) Write(data []byte) (int, error) {
 	return len(data), nil
 }
 
 type failingWriter struct {
 }
 
-func (this *failingWriter) Write(_ []byte) (int, error) {
+func (writer *failingWriter) Write(_ []byte) (int, error) {
 	return 0, errors.New("this is a test")
 }
 

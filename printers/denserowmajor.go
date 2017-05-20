@@ -29,23 +29,23 @@ func NewDenseRowMajor(width, spacing int) *DenseRowMajor {
 /*
 GetOutputWidth returns the width of the table.
 */
-func (this *DenseRowMajor) GetOutputWidth() int {
-	return this.outputWidth
+func (printer *DenseRowMajor) GetOutputWidth() int {
+	return printer.outputWidth
 }
 
 /*
 GetColumnSpacing returns the space between columns.
 */
-func (this *DenseRowMajor) GetColumnSpacing() int {
-	return this.columnSpacing
+func (printer *DenseRowMajor) GetColumnSpacing() int {
+	return printer.columnSpacing
 }
 
 /*
 Print displays cells in a row-major table format.
 */
-func (this *DenseRowMajor) Print(out io.Writer, cells []Cell) {
-	shape := this.determineShape(cells)
-	maxSpacing := utils.IntMaxReduce(shape.ColumnWidths, 0) + this.columnSpacing
+func (printer *DenseRowMajor) Print(out io.Writer, cells []Cell) {
+	shape := printer.determineShape(cells)
+	maxSpacing := utils.IntMaxReduce(shape.ColumnWidths, 0) + printer.columnSpacing
 	cachedSpaces := strings.Repeat(" ", maxSpacing)
 
 	writer := utils.NewErrWriter(out)
@@ -56,15 +56,15 @@ func (this *DenseRowMajor) Print(out io.Writer, cells []Cell) {
 			writer.WriteString("\n")
 		} else {
 			padding := shape.ColumnWidths[column] - cells[i].Width
-			spacing := padding + this.columnSpacing
+			spacing := padding + printer.columnSpacing
 			writer.WriteString(cachedSpaces[:spacing])
 		}
 	}
 	writer.Flush()
 }
 
-func (this *DenseRowMajor) determineShape(cells []Cell) tableShape {
-	maxColumns := utils.IntMax(1, utils.IntMin(this.outputWidth/2, len(cells)))
+func (printer *DenseRowMajor) determineShape(cells []Cell) tableShape {
+	maxColumns := utils.IntMax(1, utils.IntMin(printer.outputWidth/2, len(cells)))
 	columnWidths := make([]int, maxColumns)
 	for numColumns := maxColumns; numColumns > 0; numColumns-- {
 		shape := tableShape{
@@ -72,25 +72,25 @@ func (this *DenseRowMajor) determineShape(cells []Cell) tableShape {
 			NumColumns:   numColumns,
 			ColumnWidths: columnWidths[:numColumns],
 		}
-		this.computeColumnWidths(cells, shape.ColumnWidths)
-		if isValidTableShape(this, shape) {
+		printer.computeColumnWidths(cells, shape.ColumnWidths)
+		if isValidTableShape(printer, shape) {
 			return shape
 		}
 	}
-	return this.getFallbackShape(cells)
+	return printer.getFallbackShape(cells)
 }
 
-func (this *DenseRowMajor) getFallbackShape(cells []Cell) tableShape {
+func (printer *DenseRowMajor) getFallbackShape(cells []Cell) tableShape {
 	shape := tableShape{
 		NumColumns:   1,
 		NumRows:      len(cells),
 		ColumnWidths: make([]int, 1),
 	}
-	this.computeColumnWidths(cells, shape.ColumnWidths)
+	printer.computeColumnWidths(cells, shape.ColumnWidths)
 	return shape
 }
 
-func (this *DenseRowMajor) computeColumnWidths(cells []Cell, widths []int) {
+func (printer *DenseRowMajor) computeColumnWidths(cells []Cell, widths []int) {
 	for i := range widths {
 		widths[i] = 0
 	}

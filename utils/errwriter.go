@@ -26,27 +26,27 @@ func NewErrWriter(writer io.Writer) *ErrWriter {
 /*
 Err returns error occured on previous operations.
 */
-func (this *ErrWriter) Err() error {
-	return this.err
+func (ewriter *ErrWriter) Err() error {
+	return ewriter.err
 }
 
 /*
 WriteString writes given string. It does nothing if Err is not nil.
 */
-func (this *ErrWriter) WriteString(str string) {
-	if this.err != nil {
+func (ewriter *ErrWriter) WriteString(str string) {
+	if ewriter.err != nil {
 		return
 	}
-	_, err := this.writer.WriteString(str)
-	this.err = err
+	_, err := ewriter.writer.WriteString(str)
+	ewriter.err = err
 }
 
 /*
 Flush flushes the internal buffer. It does nothing if Err is not nil.
 */
-func (this *ErrWriter) Flush() {
-	if this.err != nil {
+func (ewriter *ErrWriter) Flush() {
+	if ewriter.err != nil {
 		return
 	}
-	this.err = this.writer.Flush()
+	ewriter.err = ewriter.writer.Flush()
 }
