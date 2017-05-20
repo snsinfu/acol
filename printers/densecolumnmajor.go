@@ -2,6 +2,7 @@ package printers
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/frickiericker/acol/utils"
 )
@@ -38,7 +39,26 @@ func (this *DenseColumnMajor) Print(items []string) {
 func (this *DenseColumnMajor) printColumns(cells []textCell, columnWidths []int) {
 	numColumns := len(columnWidths)
 	numRows := (len(cells) + numColumns - 1) / numColumns
-	fmt.Println(numColumns, numRows) // FIXME
+	maxSpacing := utils.IntMaxReduce(columnWidths, 0) + this.columnSpacing
+	cachedSpaces := strings.Repeat(" ", maxSpacing)
+	// Print column-major table in row-major order.
+	for row := 0; row <= numRows; row++ {
+		for column := 0; column <= numColumns; column++ {
+			i := column*numRows + row
+			if i >= len(cells) {
+				break
+			}
+			cell := cells[i]
+			fmt.Print(cell.Content)
+			if i+numRows < len(cells) {
+				padding := columnWidths[column] - cell.Width
+				spacing := padding + this.columnSpacing
+				fmt.Print(cachedSpaces[:spacing])
+			} else {
+				fmt.Print("\n")
+			}
+		}
+	}
 }
 
 func (this *DenseColumnMajor) determineColumnWidths(cells []textCell) []int {
