@@ -22,6 +22,10 @@ func Test_MakeCells(t *testing.T) {
 			items:    []string{"abc", "defg", "hijkl"},
 			expected: []Cell{{"abc", 3}, {"defg", 4}, {"hijkl", 5}},
 		},
+		{
+			items:    []string{"A\x1b[45;33;1mB\x1b[mC"},
+			expected: []Cell{{"A\x1b[45;33;1mB\x1b[mC", 3}},
+		},
 	}
 	for _, testCase := range testCases {
 		actual := MakeCells(testCase.items)
