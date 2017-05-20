@@ -1,9 +1,13 @@
 package printers
 
+import (
+	"io"
+)
+
 /*
-Common interface of printers. A printer displays given items (slice of strings)
-in a specific format.
+Common interface of printers. A printer writes given items (slice of strings) to
+a Writer in a specific format.
 */
 type Interface interface {
-	Print(items []string)
+	Print(out io.Writer, items []string)
 }

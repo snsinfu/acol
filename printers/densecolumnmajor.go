@@ -2,6 +2,7 @@ package printers
 
 import (
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/frickiericker/acol/utils"
@@ -30,13 +31,13 @@ func NewDenseColumnMajor(width, spacing int) *DenseColumnMajor {
 /*
 Print displays items in a column-major table format.
 */
-func (this *DenseColumnMajor) Print(items []string) {
+func (this *DenseColumnMajor) Print(out io.Writer, items []string) {
 	cells := makeTextCells(items)
 	columnWidths := this.determineColumnWidths(cells)
-	this.printColumns(cells, columnWidths)
+	this.printColumns(out, cells, columnWidths)
 }
 
-func (this *DenseColumnMajor) printColumns(cells []textCell, columnWidths []int) {
+func (this *DenseColumnMajor) printColumns(out io.Writer, cells []textCell, columnWidths []int) {
 	numColumns := len(columnWidths)
 	numRows := (len(cells) + numColumns - 1) / numColumns
 	maxSpacing := utils.IntMaxReduce(columnWidths, 0) + this.columnSpacing
@@ -53,9 +54,9 @@ func (this *DenseColumnMajor) printColumns(cells []textCell, columnWidths []int)
 			if i+numRows < len(cells) {
 				padding := columnWidths[column] - cell.Width
 				spacing := padding + this.columnSpacing
-				fmt.Print(cachedSpaces[:spacing])
+				fmt.Fprint(out, cachedSpaces[:spacing])
 			} else {
-				fmt.Print("\n")
+				fmt.Fprint(out, "\n")
 			}
 		}
 	}

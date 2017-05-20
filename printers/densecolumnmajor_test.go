@@ -1,9 +1,37 @@
 package printers
 
 import (
+	"bytes"
 	"reflect"
 	"testing"
 )
+
+func TestDenseColumnMajor_Print(t *testing.T) {
+	testCases := []struct {
+		width    int
+		spacing  int
+		items    []string
+		expected string
+	}{
+		{
+			width:    0,
+			spacing:  0,
+			items:    []string{},
+			expected: "",
+		},
+	}
+	for _, testCase := range testCases {
+		printer := NewDenseColumnMajor(testCase.width, testCase.spacing)
+		buffer := new(bytes.Buffer)
+		printer.Print(buffer, testCase.items)
+		actual := buffer.String()
+		if !reflect.DeepEqual(actual, testCase.expected) {
+			t.Errorf(
+				"%v, %v | %v => %v, want %v",
+				testCase.width, testCase.spacing, testCase.items, actual, testCase.expected)
+		}
+	}
+}
 
 func TestDenseColumnMajor_determineColumnWidths(t *testing.T) {
 	testCases := []struct {
