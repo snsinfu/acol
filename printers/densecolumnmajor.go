@@ -1,7 +1,6 @@
 package printers
 
 import (
-	"fmt"
 	"io"
 	"strings"
 
@@ -29,53 +28,75 @@ func NewDenseColumnMajor(width, spacing int) *DenseColumnMajor {
 }
 
 /*
+GetOutputWidth returns the width of the table.
+*/
+func (this *DenseColumnMajor) GetOutputWidth() int {
+	return this.outputWidth
+}
+
+/*
+GetColumnSpacing returns the space between columns.
+*/
+func (this *DenseColumnMajor) GetColumnSpacing() int {
+	return this.columnSpacing
+}
+
+/*
 Print displays cells in a column-major table format.
 */
 func (this *DenseColumnMajor) Print(out io.Writer, cells []Cell) {
-	columnWidths := this.determineColumnWidths(cells)
-	this.printColumns(out, cells, columnWidths)
-}
-
-func (this *DenseColumnMajor) printColumns(out io.Writer, cells []Cell, columnWidths []int) {
-	numColumns := len(columnWidths)
-	numRows := (len(cells) + numColumns - 1) / numColumns
-	maxSpacing := utils.IntMaxReduce(columnWidths, 0) + this.columnSpacing
+	shape := this.determineShape(cells)
+	maxSpacing := utils.IntMaxReduce(shape.ColumnWidths, 0) + this.columnSpacing
 	cachedSpaces := strings.Repeat(" ", maxSpacing)
-	// Print column-major table in row-major order.
-	for row := 0; row < numRows; row++ {
-		for column := 0; column < numColumns; column++ {
-			i := column*numRows + row
+
+	writer := utils.NewErrWriter(out)
+	// We need to print cells in row-major order while the cells are stored in
+	// column-major order.
+	for row := 0; row < shape.NumRows; row++ {
+		for column := 0; column < shape.NumColumns; column++ {
+			i := column*shape.NumRows + row
 			if i >= len(cells) {
 				break
 			}
 			cell := cells[i]
-			fmt.Fprint(out, cell.Content)
-			if i+numRows < len(cells) {
-				padding := columnWidths[column] - cell.Width
+			writer.WriteString(cell.Content)
+			if i+shape.NumRows < len(cells) {
+				padding := shape.ColumnWidths[column] - cell.Width
 				spacing := padding + this.columnSpacing
-				fmt.Fprint(out, cachedSpaces[:spacing])
+				writer.WriteString(cachedSpaces[:spacing])
 			} else {
-				fmt.Fprint(out, "\n")
+				writer.WriteString("\n")
 			}
 		}
 	}
+	writer.Flush()
 }
 
-func (this *DenseColumnMajor) determineColumnWidths(cells []Cell) []int {
+func (this *DenseColumnMajor) determineShape(cells []Cell) tableShape {
 	maxColumns := utils.IntMax(1, utils.IntMin(this.outputWidth, len(cells)))
 	columnWidths := make([]int, maxColumns)
 	for numColumns := maxColumns; numColumns > 1; numColumns-- {
-		columnWidths = columnWidths[:numColumns]
-		if this.computeAndCheckLayout(cells, columnWidths) {
-			return columnWidths
+		shape := tableShape{
+			ColumnWidths: columnWidths[:numColumns],
+		}
+		if this.tryComputeShape(cells, numColumns, &shape) {
+			return shape
 		}
 	}
-	columnWidths = columnWidths[:1]
-	this.computeColumnWidths(cells, len(cells), columnWidths)
-	return columnWidths
+	return this.getFallbackShape(cells)
 }
 
-func (this *DenseColumnMajor) computeAndCheckLayout(cells []Cell, columnWidths []int) bool {
+func (this *DenseColumnMajor) getFallbackShape(cells []Cell) tableShape {
+	shape := tableShape{
+		NumColumns:   1,
+		NumRows:      len(cells),
+		ColumnWidths: make([]int, 1),
+	}
+	this.computeColumnWidths(cells, shape.NumRows, shape.ColumnWidths)
+	return shape
+}
+
+func (this *DenseColumnMajor) tryComputeShape(cells []Cell, numColumns int, shape *tableShape) bool {
 	// We need to determine the number of rows. This gets rather tricky.
 	//
 	// Let n be the number of items, c be the number of columns, and r be the
@@ -93,30 +114,25 @@ func (this *DenseColumnMajor) computeAndCheckLayout(cells []Cell, columnWidths [
 	// We search the number of rows within this range. The smaller the denser,
 	// so start with the lower bound.
 	numItems := len(cells)
-	numColumns := len(columnWidths)
 	minRows := (numItems + numColumns - 1) / numColumns
 	maxRows := (numItems - 1) / (numColumns - 1)
 	for numRows := minRows; numRows <= maxRows; numRows++ {
-		this.computeColumnWidths(cells, numRows, columnWidths)
-		if this.isValidLayout(columnWidths) {
+		shape.NumColumns = numColumns
+		shape.NumRows = numRows
+		this.computeColumnWidths(cells, numRows, shape.ColumnWidths)
+		if isValidTableShape(this, *shape) {
 			return true
 		}
 	}
 	return false
 }
 
-func (this *DenseColumnMajor) isValidLayout(columnWidths []int) bool {
-	numColumns := len(columnWidths)
-	computedWidth := utils.IntSum(columnWidths) + (numColumns-1)*this.columnSpacing
-	return computedWidth <= this.outputWidth
-}
-
-func (this *DenseColumnMajor) computeColumnWidths(cells []Cell, numRows int, columnWidths []int) {
-	for i := range columnWidths {
-		columnWidths[i] = 0
+func (this *DenseColumnMajor) computeColumnWidths(cells []Cell, numRows int, widths []int) {
+	for i := range widths {
+		widths[i] = 0
 	}
 	for i, cell := range cells {
 		column := i / numRows
-		columnWidths[column] = utils.IntMax(columnWidths[column], cell.Width)
+		widths[column] = utils.IntMax(widths[column], cell.Width)
 	}
 }

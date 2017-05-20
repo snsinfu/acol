@@ -45,19 +45,23 @@ func TestDenseColumnMajor_Print(t *testing.T) {
 	}
 }
 
-func TestDenseColumnMajor_determineColumnWidths(t *testing.T) {
+func TestDenseColumnMajor_determineShape(t *testing.T) {
 	testCases := []struct {
 		width    int
 		spacing  int
 		cells    []Cell
-		expected []int
+		expected tableShape
 	}{
 		// Degenerate
 		{
-			width:    0,
-			spacing:  0,
-			cells:    []Cell{},
-			expected: []int{0},
+			width:   0,
+			spacing: 0,
+			cells:   []Cell{},
+			expected: tableShape{
+				NumRows:      0,
+				NumColumns:   1,
+				ColumnWidths: []int{0},
+			},
 		},
 		// Overflow (width == 0)
 		{
@@ -66,7 +70,11 @@ func TestDenseColumnMajor_determineColumnWidths(t *testing.T) {
 			cells: []Cell{
 				{"", 10},
 			},
-			expected: []int{10},
+			expected: tableShape{
+				NumRows:      1,
+				NumColumns:   1,
+				ColumnWidths: []int{10},
+			},
 		},
 		// Overflow (width > 0)
 		{
@@ -75,7 +83,11 @@ func TestDenseColumnMajor_determineColumnWidths(t *testing.T) {
 			cells: []Cell{
 				{"", 10},
 			},
-			expected: []int{10},
+			expected: tableShape{
+				NumRows:      1,
+				NumColumns:   1,
+				ColumnWidths: []int{10},
+			},
 		},
 		// Overflow (due to spacing)
 		{
@@ -84,7 +96,11 @@ func TestDenseColumnMajor_determineColumnWidths(t *testing.T) {
 			cells: []Cell{
 				{"", 10}, {"", 10},
 			},
-			expected: []int{10},
+			expected: tableShape{
+				NumRows:      2,
+				NumColumns:   1,
+				ColumnWidths: []int{10},
+			},
 		},
 		// Single column
 		{
@@ -93,7 +109,11 @@ func TestDenseColumnMajor_determineColumnWidths(t *testing.T) {
 			cells: []Cell{
 				{"", 5}, {"", 6}, {"", 7},
 			},
-			expected: []int{7},
+			expected: tableShape{
+				NumRows:      3,
+				NumColumns:   1,
+				ColumnWidths: []int{7},
+			},
 		},
 		// Two columns
 		{
@@ -104,7 +124,11 @@ func TestDenseColumnMajor_determineColumnWidths(t *testing.T) {
 				// [6]
 				{"", 5}, {"", 6}, {"", 7},
 			},
-			expected: []int{6, 7},
+			expected: tableShape{
+				NumRows:      2,
+				NumColumns:   2,
+				ColumnWidths: []int{6, 7},
+			},
 		},
 		// Three columns
 		{
@@ -115,12 +139,16 @@ func TestDenseColumnMajor_determineColumnWidths(t *testing.T) {
 				// [6] [8]
 				{"", 5}, {"", 6}, {"", 7}, {"", 8}, {"", 9},
 			},
-			expected: []int{6, 8, 9},
+			expected: tableShape{
+				NumRows:      2,
+				NumColumns:   3,
+				ColumnWidths: []int{6, 8, 9},
+			},
 		},
 	}
 	for _, testCase := range testCases {
 		printer := NewDenseColumnMajor(testCase.width, testCase.spacing)
-		actual := printer.determineColumnWidths(testCase.cells)
+		actual := printer.determineShape(testCase.cells)
 		if !reflect.DeepEqual(actual, testCase.expected) {
 			t.Errorf(
 				"%v, %v | %v => %v, want %v",
