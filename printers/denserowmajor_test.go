@@ -39,7 +39,9 @@ func TestDenseRowMajor_Print(t *testing.T) {
 		buffer := new(bytes.Buffer)
 		err := printer.Print(buffer, testCase.cells)
 		if err != nil {
-			t.Errorf("%v, %v | %v => unexpected error: %v", err)
+			t.Errorf(
+				"%v, %v | %v => unexpected error: %v",
+				testCase.width, testCase.spacing, testCase.cells, err)
 		}
 		actual := buffer.String()
 		if !reflect.DeepEqual(actual, testCase.expected) {
