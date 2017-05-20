@@ -46,35 +46,49 @@ func (this *DenseColumnMajor) determineColumnWidths(cells []textCell) []int {
 	columnWidths := make([]int, maxColumns)
 	for numColumns := maxColumns; numColumns > 1; numColumns-- {
 		columnWidths = columnWidths[:numColumns]
-		// Let us determine the number of rows. This gets rather tricky.
-		//
-		// Let n be the number of items, c be the number of columns, and r be
-		// the number of rows. Then, the number of items in the rightmost
-		// column x is given by
-		//
-		//     (c-1) r + x = n .
-		//
-		// But x must satisfy 1 <= x <= r for a valid table geometry. This
-		// constraint alongside with the equation above gives the possible
-		// range for r:
-		//
-		//     n/c <= r <= (n-1)/(c-1) .
-		//
-		// We search the number of rows within this range. The smaller the
-		// denser, so start with the lower bound.
-		minRows := (len(cells) + numColumns - 1) / numColumns
-		maxRows := (len(cells) - 1) / (numColumns - 1)
-		for numRows := minRows; numRows <= maxRows; numRows++ {
-			this.computeColumnWidths(cells, numRows, columnWidths)
-			computedWidth := utils.IntSum(columnWidths) + (numColumns-1)*this.columnSpacing
-			if computedWidth <= this.outputWidth {
-				return columnWidths
-			}
+		if this.computeAndCheckLayout(cells, columnWidths) {
+			return columnWidths
 		}
 	}
 	columnWidths = columnWidths[:1]
 	this.computeColumnWidths(cells, len(cells), columnWidths)
 	return columnWidths
+}
+
+func (this *DenseColumnMajor) computeAndCheckLayout(cells []textCell, columnWidths []int) bool {
+	// We need to determine the number of rows. This gets rather tricky.
+	//
+	// Let n be the number of items, c be the number of columns, and r be the
+	// number of rows. Then, the number of items in the rightmost column x is
+	// given by
+	//
+	//     (c-1) r + x = n .
+	//
+	// But x must satisfy 1 <= x <= r for a valid table geometry. This
+	// constraint alongside with the equation above gives the possible range
+	// for r:
+	//
+	//     n/c <= r <= (n-1)/(c-1) .
+	//
+	// We search the number of rows within this range. The smaller the denser,
+	// so start with the lower bound.
+	numItems := len(cells)
+	numColumns := len(columnWidths)
+	minRows := (numItems + numColumns - 1) / numColumns
+	maxRows := (numItems - 1) / (numColumns - 1)
+	for numRows := minRows; numRows <= maxRows; numRows++ {
+		this.computeColumnWidths(cells, numRows, columnWidths)
+		if this.isValidLayout(columnWidths) {
+			return true
+		}
+	}
+	return false
+}
+
+func (this *DenseColumnMajor) isValidLayout(columnWidths []int) bool {
+	numColumns := len(columnWidths)
+	computedWidth := utils.IntSum(columnWidths) + (numColumns-1)*this.columnSpacing
+	return computedWidth <= this.outputWidth
 }
 
 func (this *DenseColumnMajor) computeColumnWidths(cells []textCell, numRows int, columnWidths []int) {
