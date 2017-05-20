@@ -43,7 +43,7 @@ func (printer *DenseRowMajor) GetColumnSpacing() int {
 /*
 Print displays cells in a row-major table format.
 */
-func (printer *DenseRowMajor) Print(out io.Writer, cells []Cell) {
+func (printer *DenseRowMajor) Print(out io.Writer, cells []Cell) error {
 	shape := printer.determineShape(cells)
 	maxSpacing := utils.IntMaxReduce(shape.ColumnWidths, 0) + printer.columnSpacing
 	cachedSpaces := strings.Repeat(" ", maxSpacing)
@@ -61,6 +61,8 @@ func (printer *DenseRowMajor) Print(out io.Writer, cells []Cell) {
 		}
 	}
 	writer.Flush()
+
+	return writer.Err()
 }
 
 func (printer *DenseRowMajor) determineShape(cells []Cell) tableShape {

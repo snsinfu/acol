@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"reflect"
 	"testing"
+
+	"github.com/frickiericker/acol/iomock"
 )
 
 func TestDenseColumnMajor_Print(t *testing.T) {
@@ -154,5 +156,18 @@ func TestDenseColumnMajor_determineShape(t *testing.T) {
 				"%v, %v | %v => %v, want %v",
 				testCase.width, testCase.spacing, testCase.cells, actual, testCase.expected)
 		}
+	}
+}
+
+func TestDenseColumnMajor_Print_propagateError(t *testing.T) {
+	printer := NewDenseColumnMajor(10, 1)
+	writer := new(iomock.FailingIO)
+	cells := []Cell{{"abc", 3}, {"def", 3}}
+	err := printer.Print(writer, cells)
+	if err == nil {
+		t.Error("unexpected success")
+	}
+	if err != nil && err.Error() != iomock.ErrorMessage {
+		t.Error("unexpected error:", err)
 	}
 }

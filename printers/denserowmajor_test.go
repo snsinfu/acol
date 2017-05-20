@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"reflect"
 	"testing"
+
+	"github.com/frickiericker/acol/iomock"
 )
 
 func TestDenseRowMajor_Print(t *testing.T) {
@@ -35,7 +37,10 @@ func TestDenseRowMajor_Print(t *testing.T) {
 	for _, testCase := range testCases {
 		printer := NewDenseRowMajor(testCase.width, testCase.spacing)
 		buffer := new(bytes.Buffer)
-		printer.Print(buffer, testCase.cells)
+		err := printer.Print(buffer, testCase.cells)
+		if err != nil {
+			t.Errorf("%v, %v | %v => unexpected error: %v", err)
+		}
 		actual := buffer.String()
 		if !reflect.DeepEqual(actual, testCase.expected) {
 			t.Errorf(
@@ -169,5 +174,18 @@ func TestDenseRowMajor_determineShape(t *testing.T) {
 				"%v, %v | %v => %v, want %v",
 				testCase.width, testCase.spacing, testCase.cells, actual, testCase.expected)
 		}
+	}
+}
+
+func TestDenseRowMajor_Print_propagateError(t *testing.T) {
+	printer := NewDenseRowMajor(10, 1)
+	writer := new(iomock.FailingIO)
+	cells := []Cell{{"abc", 3}, {"def", 3}}
+	err := printer.Print(writer, cells)
+	if err == nil {
+		t.Error("unexpected success")
+	}
+	if err != nil && err.Error() != iomock.ErrorMessage {
+		t.Error("unexpected error:", err)
 	}
 }
