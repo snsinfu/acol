@@ -11,7 +11,7 @@ func TestFailingIO_Read(t *testing.T) {
 	if err == nil {
 		t.Error("unexpected success")
 	}
-	if err != nil && err.Error() != ErrorMessage {
+	if err != nil && err != Error {
 		t.Error("unexpected error:", err)
 	}
 }
@@ -23,7 +23,7 @@ func TestFailingIO_Write(t *testing.T) {
 	if err == nil {
 		t.Error("unexpected success")
 	}
-	if err != nil && err.Error() != ErrorMessage {
+	if err != nil && err != Error {
 		t.Error("unexpected error:", err)
 	}
 }

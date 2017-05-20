@@ -167,7 +167,7 @@ func TestDenseColumnMajor_Print_propagateError(t *testing.T) {
 	if err == nil {
 		t.Error("unexpected success")
 	}
-	if err != nil && err.Error() != iomock.ErrorMessage {
+	if err != nil && err != iomock.Error {
 		t.Error("unexpected error:", err)
 	}
 }
