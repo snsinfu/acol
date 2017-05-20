@@ -24,7 +24,7 @@ func NewErrWriter(writer io.Writer) *ErrWriter {
 }
 
 /*
-Err returns error occured on previous operations.
+Err returns error occurred on previous operations.
 */
 func (ewriter *ErrWriter) Err() error {
 	return ewriter.err
