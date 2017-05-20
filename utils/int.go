@@ -6,9 +6,8 @@ IntMin returns the minimum of given two integers.
 func IntMin(x, y int) int {
 	if x < y {
 		return x
-	} else {
-		return y
 	}
+	return y
 }
 
 /*
@@ -17,9 +16,8 @@ IntMax returns the maximum of given two integers.
 func IntMax(x, y int) int {
 	if x > y {
 		return x
-	} else {
-		return y
 	}
+	return y
 }
 
 /*
