@@ -43,8 +43,8 @@ func (this *DenseColumnMajor) printColumns(out io.Writer, cells []textCell, colu
 	maxSpacing := utils.IntMaxReduce(columnWidths, 0) + this.columnSpacing
 	cachedSpaces := strings.Repeat(" ", maxSpacing)
 	// Print column-major table in row-major order.
-	for row := 0; row <= numRows; row++ {
-		for column := 0; column <= numColumns; column++ {
+	for row := 0; row < numRows; row++ {
+		for column := 0; column < numColumns; column++ {
 			i := column*numRows + row
 			if i >= len(cells) {
 				break
