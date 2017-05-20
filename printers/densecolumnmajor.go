@@ -50,7 +50,7 @@ func (this *DenseColumnMajor) printColumns(out io.Writer, cells []textCell, colu
 				break
 			}
 			cell := cells[i]
-			fmt.Print(cell.Content)
+			fmt.Fprint(out, cell.Content)
 			if i+numRows < len(cells) {
 				padding := columnWidths[column] - cell.Width
 				spacing := padding + this.columnSpacing
