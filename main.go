@@ -37,6 +37,6 @@ func makePrinter() (printers.Interface, error) {
 		width = 0
 	}
 	spacing := 2
-	printer := printers.NewDenseRowMajor(width, spacing)
+	printer := printers.NewDenseColumnMajor(width, spacing)
 	return printer, nil
 }
