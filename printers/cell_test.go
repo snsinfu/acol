@@ -5,26 +5,26 @@ import (
 	"testing"
 )
 
-func Test_makeTextCells(t *testing.T) {
+func Test_MakeCells(t *testing.T) {
 	testCases := []struct {
 		items    []string
-		expected []textCell
+		expected []Cell
 	}{
 		{
 			items:    []string{},
-			expected: []textCell{},
+			expected: []Cell{},
 		},
 		{
 			items:    []string{"abc"},
-			expected: []textCell{{"abc", 3}},
+			expected: []Cell{{"abc", 3}},
 		},
 		{
 			items:    []string{"abc", "defg", "hijkl"},
-			expected: []textCell{{"abc", 3}, {"defg", 4}, {"hijkl", 5}},
+			expected: []Cell{{"abc", 3}, {"defg", 4}, {"hijkl", 5}},
 		},
 	}
 	for _, testCase := range testCases {
-		actual := makeTextCells(testCase.items)
+		actual := MakeCells(testCase.items)
 		if !reflect.DeepEqual(actual, testCase.expected) {
 			t.Errorf(
 				"%v => %v, want %v",

@@ -10,37 +10,37 @@ func TestDenseColumnMajor_Print(t *testing.T) {
 	testCases := []struct {
 		width    int
 		spacing  int
-		items    []string
+		cells    []Cell
 		expected string
 	}{
 		{
 			width:    0,
 			spacing:  0,
-			items:    []string{},
+			cells:    []Cell{},
 			expected: "",
 		},
 		{
 			width:    11,
 			spacing:  1,
-			items:    []string{"the", "quick", "brown", "fox", "jumps"},
+			cells:    []Cell{{"the", 3}, {"quick", 5}, {"brown", 5}, {"fox", 3}, {"jumps", 5}},
 			expected: "the   fox\nquick jumps\nbrown\n",
 		},
 		{
 			width:    17,
 			spacing:  1,
-			items:    []string{"the", "quick", "brown", "fox", "jumps"},
+			cells:    []Cell{{"the", 3}, {"quick", 5}, {"brown", 5}, {"fox", 3}, {"jumps", 5}},
 			expected: "the   brown jumps\nquick fox\n",
 		},
 	}
 	for _, testCase := range testCases {
 		printer := NewDenseColumnMajor(testCase.width, testCase.spacing)
 		buffer := new(bytes.Buffer)
-		printer.Print(buffer, testCase.items)
+		printer.Print(buffer, testCase.cells)
 		actual := buffer.String()
 		if !reflect.DeepEqual(actual, testCase.expected) {
 			t.Errorf(
 				"%v, %v | %v => '%v', want '%v'",
-				testCase.width, testCase.spacing, testCase.items, actual, testCase.expected)
+				testCase.width, testCase.spacing, testCase.cells, actual, testCase.expected)
 		}
 	}
 }
@@ -49,21 +49,21 @@ func TestDenseColumnMajor_determineColumnWidths(t *testing.T) {
 	testCases := []struct {
 		width    int
 		spacing  int
-		cells    []textCell
+		cells    []Cell
 		expected []int
 	}{
 		// Degenerate
 		{
 			width:    0,
 			spacing:  0,
-			cells:    []textCell{},
+			cells:    []Cell{},
 			expected: []int{0},
 		},
 		// Overflow (width == 0)
 		{
 			width:   0,
 			spacing: 0,
-			cells: []textCell{
+			cells: []Cell{
 				{"", 10},
 			},
 			expected: []int{10},
@@ -72,7 +72,7 @@ func TestDenseColumnMajor_determineColumnWidths(t *testing.T) {
 		{
 			width:   9,
 			spacing: 0,
-			cells: []textCell{
+			cells: []Cell{
 				{"", 10},
 			},
 			expected: []int{10},
@@ -81,7 +81,7 @@ func TestDenseColumnMajor_determineColumnWidths(t *testing.T) {
 		{
 			width:   20,
 			spacing: 1,
-			cells: []textCell{
+			cells: []Cell{
 				{"", 10}, {"", 10},
 			},
 			expected: []int{10},
@@ -90,7 +90,7 @@ func TestDenseColumnMajor_determineColumnWidths(t *testing.T) {
 		{
 			width:   10,
 			spacing: 0,
-			cells: []textCell{
+			cells: []Cell{
 				{"", 5}, {"", 6}, {"", 7},
 			},
 			expected: []int{7},
@@ -99,7 +99,7 @@ func TestDenseColumnMajor_determineColumnWidths(t *testing.T) {
 		{
 			width:   15,
 			spacing: 1,
-			cells: []textCell{
+			cells: []Cell{
 				// [5] [7]
 				// [6]
 				{"", 5}, {"", 6}, {"", 7},
@@ -110,7 +110,7 @@ func TestDenseColumnMajor_determineColumnWidths(t *testing.T) {
 		{
 			width:   25,
 			spacing: 1,
-			cells: []textCell{
+			cells: []Cell{
 				// [5] [7] [9]
 				// [6] [8]
 				{"", 5}, {"", 6}, {"", 7}, {"", 8}, {"", 9},

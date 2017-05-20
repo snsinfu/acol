@@ -29,15 +29,14 @@ func NewDenseColumnMajor(width, spacing int) *DenseColumnMajor {
 }
 
 /*
-Print displays items in a column-major table format.
+Print displays cells in a column-major table format.
 */
-func (this *DenseColumnMajor) Print(out io.Writer, items []string) {
-	cells := makeTextCells(items)
+func (this *DenseColumnMajor) Print(out io.Writer, cells []Cell) {
 	columnWidths := this.determineColumnWidths(cells)
 	this.printColumns(out, cells, columnWidths)
 }
 
-func (this *DenseColumnMajor) printColumns(out io.Writer, cells []textCell, columnWidths []int) {
+func (this *DenseColumnMajor) printColumns(out io.Writer, cells []Cell, columnWidths []int) {
 	numColumns := len(columnWidths)
 	numRows := (len(cells) + numColumns - 1) / numColumns
 	maxSpacing := utils.IntMaxReduce(columnWidths, 0) + this.columnSpacing
@@ -62,7 +61,7 @@ func (this *DenseColumnMajor) printColumns(out io.Writer, cells []textCell, colu
 	}
 }
 
-func (this *DenseColumnMajor) determineColumnWidths(cells []textCell) []int {
+func (this *DenseColumnMajor) determineColumnWidths(cells []Cell) []int {
 	maxColumns := utils.IntMax(1, utils.IntMin(this.outputWidth, len(cells)))
 	columnWidths := make([]int, maxColumns)
 	for numColumns := maxColumns; numColumns > 1; numColumns-- {
@@ -76,7 +75,7 @@ func (this *DenseColumnMajor) determineColumnWidths(cells []textCell) []int {
 	return columnWidths
 }
 
-func (this *DenseColumnMajor) computeAndCheckLayout(cells []textCell, columnWidths []int) bool {
+func (this *DenseColumnMajor) computeAndCheckLayout(cells []Cell, columnWidths []int) bool {
 	// We need to determine the number of rows. This gets rather tricky.
 	//
 	// Let n be the number of items, c be the number of columns, and r be the
@@ -112,7 +111,7 @@ func (this *DenseColumnMajor) isValidLayout(columnWidths []int) bool {
 	return computedWidth <= this.outputWidth
 }
 
-func (this *DenseColumnMajor) computeColumnWidths(cells []textCell, numRows int, columnWidths []int) {
+func (this *DenseColumnMajor) computeColumnWidths(cells []Cell, numRows int, columnWidths []int) {
 	for i := range columnWidths {
 		columnWidths[i] = 0
 	}

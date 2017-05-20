@@ -26,7 +26,8 @@ func run() error {
 		return fmt.Errorf("creating printer:", err)
 	}
 
-	printer.Print(os.Stdout, items)
+	cells := printers.MakeCells(items)
+	printer.Print(os.Stdout, cells)
 	return nil
 }
 

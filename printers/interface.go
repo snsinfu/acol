@@ -5,9 +5,9 @@ import (
 )
 
 /*
-Common interface of printers. A printer writes given items (slice of strings) to
-a Writer in a specific format.
+Common interface of printers. A printer writes given cells (strings with width
+information) to a Writer in a specific format.
 */
 type Interface interface {
-	Print(out io.Writer, items []string)
+	Print(out io.Writer, cells []Cell)
 }

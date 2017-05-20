@@ -4,13 +4,16 @@ import (
 	"github.com/mattn/go-runewidth"
 )
 
-type textCell struct {
+type Cell struct {
 	Content string
 	Width   int
 }
 
-func makeTextCells(items []string) []textCell {
-	cells := make([]textCell, len(items))
+/*
+MakeCells maps slice of strings into cells using go-runewidth package.
+*/
+func MakeCells(items []string) []Cell {
+	cells := make([]Cell, len(items))
 	for i, item := range items {
 		cells[i].Content = item
 		cells[i].Width = runewidth.StringWidth(item)

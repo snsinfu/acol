@@ -9,21 +9,21 @@ func TestDenseRowMajor_determineColumnWidths(t *testing.T) {
 	testCases := []struct {
 		width    int
 		spacing  int
-		cells    []textCell
+		cells    []Cell
 		expected []int
 	}{
 		// Degenerate
 		{
 			width:    0,
 			spacing:  0,
-			cells:    []textCell{},
+			cells:    []Cell{},
 			expected: []int{0},
 		},
 		// Overflow (width == 0)
 		{
 			width:   0,
 			spacing: 0,
-			cells: []textCell{
+			cells: []Cell{
 				{"", 10},
 			},
 			expected: []int{10},
@@ -32,7 +32,7 @@ func TestDenseRowMajor_determineColumnWidths(t *testing.T) {
 		{
 			width:   9,
 			spacing: 0,
-			cells: []textCell{
+			cells: []Cell{
 				{"", 10},
 			},
 			expected: []int{10},
@@ -41,7 +41,7 @@ func TestDenseRowMajor_determineColumnWidths(t *testing.T) {
 		{
 			width:   20,
 			spacing: 1,
-			cells: []textCell{
+			cells: []Cell{
 				{"", 10},
 				{"", 10},
 			},
@@ -51,7 +51,7 @@ func TestDenseRowMajor_determineColumnWidths(t *testing.T) {
 		{
 			width:   30,
 			spacing: 1,
-			cells: []textCell{
+			cells: []Cell{
 				{"", 5}, {"", 6}, {"", 7},
 			},
 			expected: []int{5, 6, 7},
@@ -60,7 +60,7 @@ func TestDenseRowMajor_determineColumnWidths(t *testing.T) {
 		{
 			width:   30,
 			spacing: 1,
-			cells: []textCell{
+			cells: []Cell{
 				{"", 10}, {"", 12},
 				{"", 11},
 			},
@@ -70,7 +70,7 @@ func TestDenseRowMajor_determineColumnWidths(t *testing.T) {
 		{
 			width:   30,
 			spacing: 1,
-			cells: []textCell{
+			cells: []Cell{
 				{"", 10}, {"", 12},
 				{"", 11}, {"", 11},
 				{"", 10}, {"", 13},
@@ -81,7 +81,7 @@ func TestDenseRowMajor_determineColumnWidths(t *testing.T) {
 		{
 			width:   30,
 			spacing: 1,
-			cells: []textCell{
+			cells: []Cell{
 				{"", 13}, {"", 15},
 				{"", 11}, {"", 11},
 				{"", 10}, {"", 13},

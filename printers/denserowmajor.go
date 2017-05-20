@@ -28,15 +28,14 @@ func NewDenseRowMajor(width, spacing int) *DenseRowMajor {
 }
 
 /*
-Print displays items in a row-major table format.
+Print displays cells in a row-major table format.
 */
-func (this *DenseRowMajor) Print(out io.Writer, items []string) {
-	cells := makeTextCells(items)
+func (this *DenseRowMajor) Print(out io.Writer, cells []Cell) {
 	columnWidths := this.determineColumnWidths(cells)
 	this.printColumns(out, cells, columnWidths)
 }
 
-func (this *DenseRowMajor) printColumns(out io.Writer, cells []textCell, columnWidths []int) {
+func (this *DenseRowMajor) printColumns(out io.Writer, cells []Cell, columnWidths []int) {
 	maxSpacing := utils.IntMaxReduce(columnWidths, 0) + this.columnSpacing
 	spaces := strings.Repeat(" ", maxSpacing)
 	numColumns := len(columnWidths)
@@ -57,7 +56,7 @@ func (this *DenseRowMajor) printColumns(out io.Writer, cells []textCell, columnW
 	}
 }
 
-func (this *DenseRowMajor) determineColumnWidths(cells []textCell) []int {
+func (this *DenseRowMajor) determineColumnWidths(cells []Cell) []int {
 	maxColumns := utils.IntMax(1, utils.IntMin(this.outputWidth/2, len(cells)))
 	columnWidths := make([]int, maxColumns)
 	for numColumns := maxColumns; numColumns > 0; numColumns-- {
@@ -71,7 +70,7 @@ func (this *DenseRowMajor) determineColumnWidths(cells []textCell) []int {
 	return columnWidths
 }
 
-func (this *DenseRowMajor) computeColumnWidths(cells []textCell, columnWidths []int) {
+func (this *DenseRowMajor) computeColumnWidths(cells []Cell, columnWidths []int) {
 	for i := range columnWidths {
 		columnWidths[i] = 0
 	}
