@@ -1,7 +1,7 @@
 package printers
 
 import (
-	"github.com/frickiericker/acol/descape"
+	"github.com/snsinfu/acol/descape"
 )
 
 /*

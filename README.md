@@ -12,23 +12,23 @@ Styles standard input in a tabular format like `ls`.
 - [Usage](#usage)
 - [Alternatives](#alternatives)
 
-[travis-badge]: https://travis-ci.org/frickiericker/acol.svg?branch=master
-[travis-url]: https://travis-ci.org/frickiericker/acol
-[report-badge]: https://goreportcard.com/badge/github.com/frickiericker/acol
-[report-url]: https://goreportcard.com/report/github.com/frickiericker/acol
+[travis-badge]: https://travis-ci.org/snsinfu/acol.svg?branch=master
+[travis-url]: https://travis-ci.org/snsinfu/acol
+[report-badge]: https://goreportcard.com/badge/github.com/snsinfu/acol
+[report-url]: https://goreportcard.com/report/github.com/snsinfu/acol
 [license-badge]: http://img.shields.io/badge/license-MIT-blue.svg
 
 ## Installation
 
 [Install Go](https://golang.org/doc/install) and run this command:
 
-    go get github.com/frickiericker/acol
+    go get github.com/snsinfu/acol
 
 Now acol is placed in GOPATH/bin (which is ~/go/bin by default).
 
 ## Testing
 
-Move to the repository root (or ~/go/github.com/frickiericker/acol) and
+Move to the repository root (or ~/go/github.com/snsinfu/acol) and
 
     go test ./...
 

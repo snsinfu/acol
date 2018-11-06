@@ -1,7 +1,7 @@
 package printers
 
 import (
-	"github.com/frickiericker/acol/utils"
+	"github.com/snsinfu/acol/utils"
 )
 
 type tabular interface {

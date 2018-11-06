@@ -6,8 +6,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/frickiericker/acol/printers"
-	"github.com/frickiericker/acol/utils"
+	"github.com/snsinfu/acol/printers"
+	"github.com/snsinfu/acol/utils"
 	"github.com/mkideal/cli"
 )
 

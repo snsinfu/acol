@@ -4,7 +4,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/frickiericker/acol/utils"
+	"github.com/snsinfu/acol/utils"
 )
 
 /*

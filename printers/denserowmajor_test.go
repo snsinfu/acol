@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/frickiericker/acol/iomock"
+	"github.com/snsinfu/acol/iomock"
 )
 
 func TestDenseRowMajor_Print(t *testing.T) {
